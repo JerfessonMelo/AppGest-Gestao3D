@@ -6,7 +6,7 @@ public class TelaPrincipal extends JFrame {
 
     public TelaPrincipal() {
         setTitle("Sistema de Gestão 3D");
-        setSize(600, 500);
+        setExtendedState(JFrame.MAXIMIZED_BOTH);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
 
