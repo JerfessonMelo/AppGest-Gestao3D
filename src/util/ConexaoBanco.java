@@ -2,6 +2,7 @@ package src.util;
 
 import java.io.InputStream;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -19,7 +20,7 @@ public class ConexaoBanco {
     private static Connection conexao = null;
     private static final Logger LOGGER = Logger.getLogger(ConexaoBanco.class.getName());
 
-    public static Connection getConnection() {
+    public static Connection getConnection() throws SQLException {
         if (conexao != null) {
             try {
                 if (!conexao.isClosed()) {
@@ -34,14 +35,15 @@ public class ConexaoBanco {
             Path destino = Paths.get(System.getProperty("user.home"), APP_FOLDER, DB_NAME);
 
             if (Files.notExists(destino)) {
-                InputStream input = ConexaoBanco.class.getResourceAsStream("/" + DB_NAME);
-                if (input == null) {
-                    throw new FileNotFoundException("Banco '" + DB_NAME + "' não encontrado nos resources.");
-                }
+                try (InputStream input = ConexaoBanco.class.getResourceAsStream("/" + DB_NAME)) {
+                    if (input == null) {
+                        throw new FileNotFoundException("Banco '" + DB_NAME + "' não encontrado nos resources.");
+                    }
 
-                Files.createDirectories(destino.getParent());
-                Files.copy(input, destino, StandardCopyOption.REPLACE_EXISTING);
-                LOGGER.info("Banco copiado para: " + destino.toString());
+                    Files.createDirectories(destino.getParent());
+                    Files.copy(input, destino, StandardCopyOption.REPLACE_EXISTING);
+                    LOGGER.info("Banco copiado para: " + destino.toString());
+                }
             }
 
             String dbUrl = "jdbc:sqlite:" + destino.toString();
@@ -54,9 +56,9 @@ public class ConexaoBanco {
             LOGGER.info("Conexão com o banco de dados estabelecida: " + dbUrl);
             return conexao;
 
-        } catch (Exception e) {
+        } catch (IOException | SQLException e) {
             LOGGER.log(Level.SEVERE, "Erro ao conectar com o banco: ", e);
-            return null;
+            throw new SQLException("Erro ao conectar com o banco", e);
         }
     }
 
