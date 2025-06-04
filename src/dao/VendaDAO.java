@@ -7,6 +7,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import src.model.Venda;
+import src.model.VendaDetalhada;
 import src.util.ConexaoBanco;
 
 public class VendaDAO {
@@ -28,27 +29,31 @@ public class VendaDAO {
         }
     }
 
-    public List<String> relatorioVendas() throws SQLException {
-        List<String> Relatorio = new ArrayList<>();
-        try (Connection conn = ConexaoBanco.getConnection()) {
-            String sql = 
-            "SELECT V.id, C.nome, F.tipo, V.precoTotal, V.statusPagamento " +
-            "FROM Vendas V " +                                                 
-            "JOIN Clientes C ON V.clienteId = C.id " +                        
-            "JOIN Filamentos F ON V.filamentoId = F.id"; 
-            Statement stmt = conn.createStatement();
-            ResultSet rs = stmt.executeQuery(sql);
-            while (rs.next()) {
-                String linha = String.format("Venda #%d | Cliente: %s | Filamento: %s | Total R$: %.2f |  %s", 
+    public List<VendaDetalhada> relatorioVendas() throws SQLException {
+    List<VendaDetalhada> relatorio = new ArrayList<>();
+    try (Connection conn = ConexaoBanco.getConnection()) {
+        String sql =
+            "SELECT V.id, C.nome AS cliente, F.tipo AS filamento, V.gramasUtilizadas, V.minutosImpressao, " +
+            "V.precoTotal, V.statusPagamento " +
+            "FROM Vendas V " +
+            "JOIN Clientes C ON V.clienteId = C.id " +
+            "JOIN Filamentos F ON V.filamentoId = F.id";
+        Statement stmt = conn.createStatement();
+        ResultSet rs = stmt.executeQuery(sql);
+        while (rs.next()) {
+            VendaDetalhada v = new VendaDetalhada(
                 rs.getInt("id"),
-                rs.getString("nome"),
-                rs.getString("tipo"),
+                rs.getString("cliente"),
+                rs.getString("filamento"),
+                rs.getDouble("gramasUtilizadas"),
+                rs.getInt("minutosImpressao"),
                 rs.getDouble("precoTotal"),
                 rs.getString("statusPagamento")
-                );
-                Relatorio.add(linha);
-            }
+            );
+            relatorio.add(v);
         }
-        return Relatorio;
-    }   
+    }
+    return relatorio;
+}
+      
 }

@@ -11,13 +11,13 @@ public class TelaCadastrarImpressora extends JFrame {
     private JTextField txtNome;
     private JTextField txtConsumo;
     private JTextField txtValorKwh;
-    private JTextField txtLucro;
     private JButton btnCadastrar;
 
     public TelaCadastrarImpressora() {
         setTitle("Cadastro de Impressora");
-        setSize(350, 300);
+        setSize(450, 300);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        setLocationRelativeTo(null);
         setLayout(null);
 
         JLabel lblNome = new JLabel("Nome:");
@@ -44,14 +44,6 @@ public class TelaCadastrarImpressora extends JFrame {
         txtValorKwh.setBounds(150, 100, 150, 25);
         add(txtValorKwh);
 
-        JLabel lblLucro = new JLabel("Lucro (%):");
-        lblLucro.setBounds(20, 140, 120, 25);
-        add(lblLucro);
-
-        txtLucro = new JTextField();
-        txtLucro.setBounds(150, 140, 150, 25);
-        add(txtLucro);
-
         btnCadastrar = new JButton("Cadastrar");
         btnCadastrar.setBounds(100, 190, 120, 30);
         add(btnCadastrar);
@@ -62,12 +54,17 @@ public class TelaCadastrarImpressora extends JFrame {
                     String nome = txtNome.getText();
                     double consumo = Double.parseDouble(txtConsumo.getText());
                     double valorKwh = Double.parseDouble(txtValorKwh.getText());
-                    double lucro = Double.parseDouble(txtLucro.getText());
 
-                    Impressora impressora = new Impressora(0, nome, consumo, valorKwh, lucro);
+                    Impressora impressora = new Impressora(0, nome, consumo, valorKwh);
                     new ImpressoraDAO().cadastrarImpressora(impressora);
+                    
+                    StringBuilder exibir=new StringBuilder();
+                    exibir.append("Nome impressora: "+nome+"\n");
+                    exibir.append("Consumo:"+consumo+"\n");
+                    exibir.append("Valor em KWH: "+valorKwh+"\n");
+                    String message=exibir.toString();
 
-                    JOptionPane.showMessageDialog(null, "✅ Impressora cadastrada com sucesso!");
+                    JOptionPane.showMessageDialog(null,message,"✅ Impressora cadastrada com sucesso!",JOptionPane.INFORMATION_MESSAGE);
                     dispose();
                 } catch (Exception ex) {
                     JOptionPane.showMessageDialog(null, "Erro ao cadastrar impressora: " + ex.getMessage());

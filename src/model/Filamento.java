@@ -41,7 +41,7 @@ public class Filamento {
         return densidade;
     }
 
-    public void setDensidade(int densidade) {
+    public void setDensidade(double densidade) {
         this.densidade = densidade;
     }
  

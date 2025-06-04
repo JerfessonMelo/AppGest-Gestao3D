@@ -8,20 +8,10 @@ public class Venda {
     private double gramasUtilizadas;
     private int minutosImpressao;
     private double precoTotal;
+    private double percentualLucro; 
 
     public Venda(Cliente cliente, Filamento filamento, String statusPagamento, double gramasUtilizadas,
             int minutosImpressao, double precoTotal) {
-        this.cliente = cliente;
-        this.filamento = filamento;
-        this.statusPagamento = statusPagamento;
-        this.gramasUtilizadas = gramasUtilizadas;
-        this.minutosImpressao = minutosImpressao;
-        this.precoTotal = precoTotal;
-    }
-
-    public Venda(int id, Cliente cliente, Filamento filamento, String statusPagamento, int gramasUtilizadas,
-            int minutosImpressao, int precoTotal) {
-        this.id = id;
         this.cliente = cliente;
         this.filamento = filamento;
         this.statusPagamento = statusPagamento;
@@ -84,5 +74,21 @@ public class Venda {
 
     public void setPrecoTotal(int precoTotal) {
         this.precoTotal = precoTotal;
+    }
+
+    public void setGramasUtilizadas(double gramasUtilizadas) {
+        this.gramasUtilizadas = gramasUtilizadas;
+    }
+
+    public void setPrecoTotal(double precoTotal) {
+        this.precoTotal = precoTotal;
+    }
+
+    public double getPercentualLucro() {
+        return percentualLucro;
+    }
+
+    public void setPercentualLucro(double percentualLucro) {
+        this.percentualLucro = percentualLucro;
     }
 }

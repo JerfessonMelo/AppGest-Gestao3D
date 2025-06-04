@@ -31,7 +31,10 @@ public class FilamentoDAO {
             Statement stmt = conn.createStatement();
             ResultSet rs = stmt.executeQuery(sql);
             while (rs.next()) {
-                lista.add(new Filamento(rs.getInt("id"), rs.getString("tipo"), rs.getInt("precoKg"), rs.getInt("densidade")));
+                lista.add(new Filamento(rs.getInt("id"), 
+                rs.getString("tipo"), 
+                rs.getInt("precoKg"), 
+                rs.getDouble("densidade")));
             }
         } catch (Exception e) {
             System.out.println("Erro ao lista filamentos " + e.getMessage());
@@ -52,5 +55,25 @@ public class FilamentoDAO {
                 throw new SQLException("Filamento não encontrado");
             }
         } 
+    }
+
+    public Filamento buscarPorId(int id) throws SQLException {
+        try (Connection conn = ConexaoBanco.getConnection()) {
+            String sql = "SELECT id, tipo, precoKg, densidade FROM Filamentos WHERE id = ?";
+            PreparedStatement stmt = conn.prepareStatement(sql);
+            stmt.setInt(1, id);
+            ResultSet rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                return new Filamento(
+                    rs.getInt("id"),
+                    rs.getString("tipo"),
+                    rs.getInt("precoKg"),
+                    rs.getDouble("densidade")
+                );
+            } else {
+                throw new SQLException("Filamento não encontrado");
+            }
+        }
     }
 }
