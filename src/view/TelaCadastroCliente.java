@@ -14,7 +14,7 @@ public class TelaCadastroCliente extends JFrame {
 
     public TelaCadastroCliente() {
         setTitle("Cadastro de Cliente");
-        setSize(400, 200);
+        setSize(450, 300);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setLocationRelativeTo(null);
         setLayout(null);

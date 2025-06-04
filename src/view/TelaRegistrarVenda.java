@@ -17,15 +17,17 @@ public class TelaRegistrarVenda extends JFrame {
     private JComboBox<String> comboClientes;
     private JComboBox<String> comboFilamentos;
     private JComboBox<String> comboImpressoras;
-    private JTextField txtGramas;
     private JTextField txtMinutos;
-    private JTextField txtStatus;
+    private JComboBox<String> comboStatus;
     private JButton btnRegistrar;
+    private JTextField txtMetros;
+    private JTextField txtLucro;
 
     public TelaRegistrarVenda() {
         setTitle("Registrar Venda");
-        setSize(400, 300);
+        setSize(450, 300);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        setLocationRelativeTo(null);
         setLayout(null);
 
         JLabel lblCliente = new JLabel("Cliente:");
@@ -52,13 +54,13 @@ public class TelaRegistrarVenda extends JFrame {
         comboImpressoras.setBounds(130, 80, 200, 20);
         add(comboImpressoras);
 
-        JLabel lblGramas = new JLabel("Gramas:");
-        lblGramas.setBounds(20, 110, 100, 20);
-        add(lblGramas);
+        JLabel lblMetros = new JLabel("Metros utilizados:");
+        lblMetros.setBounds(20, 110, 150, 20);
+        add(lblMetros);
 
-        txtGramas = new JTextField();
-        txtGramas.setBounds(130, 110, 100, 20);
-        add(txtGramas);
+        txtMetros = new JTextField();
+        txtMetros.setBounds(130, 110, 100, 20);
+        add(txtMetros);
 
         JLabel lblMinutos = new JLabel("Minutos:");
         lblMinutos.setBounds(20, 140, 100, 20);
@@ -68,16 +70,25 @@ public class TelaRegistrarVenda extends JFrame {
         txtMinutos.setBounds(130, 140, 100, 20);
         add(txtMinutos);
 
+        JLabel lblLucroExtra = new JLabel("Lucro desejado (%):");
+        lblLucroExtra.setBounds(20, 170, 150, 20);
+        add(lblLucroExtra);
+
+        txtLucro = new JTextField("");
+        txtLucro.setBounds(130, 170, 100, 20);
+        add(txtLucro);
+
         JLabel lblStatus = new JLabel("Status Pagamento:");
-        lblStatus.setBounds(20, 170, 150, 20);
+        lblStatus.setBounds(20, 200, 150, 20);
         add(lblStatus);
-
-        txtStatus = new JTextField("Pago ou Pendente");
-        txtStatus.setBounds(130, 170, 150, 20);
-        add(txtStatus);
-
+        
+        String[] statusOptions = {"Pago", "Pendente"};
+        comboStatus = new JComboBox<>(statusOptions);
+        comboStatus.setBounds(130, 200, 150, 20);
+        add(comboStatus);
+   
         btnRegistrar = new JButton("Registrar Venda");
-        btnRegistrar.setBounds(100, 210, 180, 30);
+        btnRegistrar.setBounds(130, 230, 180, 30);
         add(btnRegistrar);
 
         preencherCombos();
@@ -111,36 +122,45 @@ public class TelaRegistrarVenda extends JFrame {
                     int clienteId = Integer.parseInt(comboClientes.getSelectedItem().toString().split(" - ")[0]);
                     int filamentoId = Integer.parseInt(comboFilamentos.getSelectedItem().toString().split(" - ")[0]);
                     int impressoraId = Integer.parseInt(comboImpressoras.getSelectedItem().toString().split(" - ")[0]);
-
-                    double gramas = Double.parseDouble(txtGramas.getText());
+    
+                    double metros = Double.parseDouble(txtMetros.getText());
                     int minutos = Integer.parseInt(txtMinutos.getText());
-                    String status = txtStatus.getText();
-
-                    int precoKg = new FilamentoDAO().obterPrecoFilamento(filamentoId);
+                    String status = comboStatus.getSelectedItem().toString();
+                    double lucro = Double.parseDouble(txtLucro.getText());
+    
+                    Filamento filamento = new FilamentoDAO().buscarPorId(filamentoId);
                     Impressora impressora = new ImpressoraDAO().buscarImpressoraPorId(impressoraId);
-
-                    double custoMaterial = (gramas / 1000.0) * precoKg;
+    
+                    double densidade = filamento.getDensidade();
+                    double raio = 1.75 / 2 / 10.0;
+                    double areaDiametroFilamento = Math.PI * Math.pow(raio, 2);
+                    double comprimentoCm = metros * 100.0;
+                    double gramas = areaDiametroFilamento * comprimentoCm * densidade;
+    
+                    double custoMaterial = (gramas / 1000.0) * filamento.getPrecoKg();
                     double consumoKWh = (minutos / 60.0) * impressora.getConsumoWatts() / 1000.0;
                     double custoEnergia = consumoKWh * impressora.getValorKwH();
                     double custoTotal = custoMaterial + custoEnergia;
-                    double precoFinal = custoTotal * (1 + impressora.getPercentualLucro() / 100.0);
-
+                    double precoFinal = custoTotal * (1 + (lucro / 100.0));
+    
                     Venda venda = new Venda(
                             new Cliente(clienteId, ""),
-                            new Filamento(filamentoId, "", precoKg, 0),
+                            filamento,
                             status,
                             gramas,
                             minutos,
                             precoFinal
                     );
-
+    
                     new VendaDAO().novaVenda(venda);
-
-                    JOptionPane.showMessageDialog(null, String.format("Venda registrada!\nTotal a cobrar: R$ %.2f", precoFinal));
+    
+                    JOptionPane.showMessageDialog(null, String.format("✅ Venda registrada!\nTotal a cobrar: R$ %.2f\nGramas utilizadas: %.2f g", precoFinal, gramas));
                 } catch (Exception ex) {
                     JOptionPane.showMessageDialog(null, "Erro ao registrar venda: " + ex.getMessage());
+                    ex.printStackTrace();
                 }
             }
         });
     }
+    
 }

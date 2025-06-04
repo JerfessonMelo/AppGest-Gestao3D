@@ -12,12 +12,11 @@ import src.util.ConexaoBanco;
 public class ImpressoraDAO {
     public void cadastrarImpressora(Impressora impressora) throws SQLException {
         try (Connection conn = ConexaoBanco.getConnection()) {
-            String sql = "INSERT INTO Impressoras (nome, consumoWatts, valorKwH, percentualLucro) VALUES (?, ?, ?, ?)";
+            String sql = "INSERT INTO Impressoras (nome, consumoWatts, valorKwH) VALUES (?, ?, ?)";
             PreparedStatement stmt = conn.prepareStatement(sql);
             stmt.setString(1, impressora.getNome());
             stmt.setDouble(2, impressora.getConsumoWatts());
             stmt.setDouble(3, impressora.getValorKwH());
-            stmt.setDouble(4, impressora.getPercentualLucro());
             stmt.executeUpdate();
         }
     }
@@ -34,8 +33,7 @@ public class ImpressoraDAO {
                     rs.getInt("id"),
                     rs.getString("nome"),
                     rs.getDouble("consumoWatts"),
-                    rs.getDouble("valorKwH"),
-                    rs.getDouble("percentualLucro")
+                    rs.getDouble("valorKwH")
                 ));
             }
         }
@@ -53,8 +51,7 @@ public class ImpressoraDAO {
                     rs.getInt("id"),
                     rs.getString("nome"),
                     rs.getDouble("consumoWatts"),
-                    rs.getDouble("valorKwH"),
-                    rs.getDouble("percentualLucro")
+                    rs.getDouble("valorKwH")
                 );
             } else {
                 throw new SQLException("Impressora não encontrada.");

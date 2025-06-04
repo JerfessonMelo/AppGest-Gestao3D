@@ -4,14 +4,12 @@ public class Impressora {
     private String nome;
     private double consumoWatts;
     private double valorKwH;
-    private double percentualLucro;
 
-    public Impressora(int id, String nome, double consumoWatts, double valorKwH, double percentualLucro) {
+    public Impressora(int id, String nome, double consumoWatts, double valorKwH) {
         this.id = id;
         this.nome = nome;
         this.consumoWatts = consumoWatts;
         this.valorKwH = valorKwH;
-        this.percentualLucro = percentualLucro;
     }
 
     public int getId() {
@@ -46,11 +44,4 @@ public class Impressora {
         this.valorKwH = valorKwH;
     }
 
-    public double getPercentualLucro() {
-        return percentualLucro;
-    }
-
-    public void setPercentualLucro(double percentualLucro) {
-        this.percentualLucro = percentualLucro;
-    }
 }
